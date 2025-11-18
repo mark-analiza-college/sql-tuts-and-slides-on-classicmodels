@@ -456,11 +456,27 @@ ALTER TABLE students
 MODIFY COLUMN email VARCHAR(150) NOT NULL UNIQUE;
 ```
 
-**Change column name and type:**
+### Renaming Columns
+
+**Rename a column (keep same data type):**
 ```sql
 ALTER TABLE students
-CHANGE COLUMN phone phone_number VARCHAR(30);
+CHANGE COLUMN phone phone_number VARCHAR(20);
 ```
+*Note: You must specify the data type even if it's not changing*
+
+**Rename a column and change its type:**
+```sql
+ALTER TABLE students
+CHANGE COLUMN phone_number contact_phone VARCHAR(30);
+```
+
+**Rename a column with all constraints preserved:**
+```sql
+ALTER TABLE students
+CHANGE COLUMN email email_address VARCHAR(100) UNIQUE NOT NULL;
+```
+*All existing constraints (UNIQUE, NOT NULL, etc.) must be re-specified*
 
 ### Dropping Columns
 
