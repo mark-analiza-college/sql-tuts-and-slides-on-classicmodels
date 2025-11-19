@@ -142,8 +142,11 @@ INSERT INTO courses (id, course_name) VALUES
 (1, 'FullStack'),
 (2, 'Data'),
 (3, 'DevOps'),
-(4, 'Product');
+(4, 'Product'),
+(5, 'Cybersecurity');
 ```
+
+**Note:** Course 'Cybersecurity' has no classes assigned. This will help demonstrate RIGHT JOIN and FULL OUTER JOIN.
 
 #### Insert Classes
 ```sql
@@ -151,8 +154,11 @@ INSERT INTO classes (id, class_name, building, course_id, status) VALUES
 (1, 'A', 'North', 4, 'Active'),
 (2, 'B', 'South', 3, 'Active'),
 (3, 'C', 'South', 2, 'Active'),
-(4, 'D', 'North', 1, 'Active');
+(4, 'D', 'North', 1, 'Active'),
+(5, 'E', 'East', 1, 'Active');
 ```
+
+**Note:** Class E is an empty class with no students assigned. This will help demonstrate RIGHT JOIN and FULL OUTER JOIN.
 
 #### Insert Lecturers
 ```sql
@@ -164,8 +170,11 @@ INSERT INTO lecturers (id, lecturer_name) VALUES
 (5, 'James Anderson'),
 (6, 'David Martin'),
 (7, 'Michael Thompson'),
-(8, 'Robert Robinson');
+(8, 'Robert Robinson'),
+(9, 'Sarah Williams');
 ```
+
+**Note:** Lecturer 9 (Sarah Williams) has no contract assigned. This will help demonstrate LEFT JOIN and FULL OUTER JOIN.
 
 #### Insert Lecturer Contracts (1:1 Relationship)
 ```sql
@@ -207,8 +216,11 @@ INSERT INTO assignments (id, title, description, due_date, course_id) VALUES
 (2, 'SQL Queries Practice', 'Write complex JOIN queries', '2024-12-20', 1),
 (3, 'Data Analysis Report', 'Analyze sales data using SQL', '2024-12-18', 2),
 (4, 'DevOps Pipeline Setup', 'Create CI/CD pipeline', '2024-12-22', 3),
-(5, 'Product Requirements Document', 'Write PRD for new feature', '2024-12-25', 4);
+(5, 'Product Requirements Document', 'Write PRD for new feature', '2024-12-25', 4),
+(6, 'Security Audit Report', 'Conduct security assessment', '2024-12-30', 5);
 ```
+
+**Note:** Assignment 6 (Security Audit Report) has no student submissions. This will help demonstrate RIGHT JOIN and FULL OUTER JOIN.
 
 #### Insert Student Assignments (N:M Relationship)
 ```sql
@@ -388,6 +400,8 @@ LEFT JOIN students s ON sa.student_id = s.id
 ORDER BY a.title, s.full_name;
 ```
 
+**Result:** Returns all assignments, including assignment 6 (Security Audit Report) with NULL for student_name, grade, and status since no students have submitted it yet.
+
 ### Example 6: Side-by-Side Comparison - INNER JOIN vs LEFT JOIN
 
 **INNER JOIN - Only Students with Classes:**
@@ -441,7 +455,7 @@ FROM students s
 RIGHT JOIN classes c ON s.class_id = c.id;
 ```
 
-**Result:** All classes, with NULL for student_name if class has no students.
+**Result:** All classes, with NULL for student_name if class has no students. Class E (with no students) **WILL** appear in the results with NULL for student_name.
 
 ### Example 2: All Courses and Their Classes
 ```sql
@@ -453,6 +467,8 @@ FROM classes cl
 RIGHT JOIN courses co ON cl.course_id = co.id;
 ```
 
+**Result:** All courses, with NULL for class_name and building if course has no classes. Course 'Cybersecurity' (with no classes) **WILL** appear in the results with NULL values.
+
 ### Example 3: Find Classes Without Students
 ```sql
 SELECT 
@@ -462,6 +478,8 @@ FROM students s
 RIGHT JOIN classes c ON s.class_id = c.id
 WHERE s.id IS NULL;
 ```
+
+**Result:** Returns class E (the empty class with no students). This demonstrates how RIGHT JOIN can find records in the right table that don't have matches in the left table.
 
 **Note:** RIGHT JOIN is less commonly used. You can achieve the same result by swapping tables and using LEFT JOIN.
 
@@ -497,6 +515,8 @@ FROM students s
 RIGHT JOIN classes c ON s.class_id = c.id;
 ```
 
+**Result:** Returns all students (including unassigned students 11, 12, 13 with NULL class_name) AND all classes (including empty class E with NULL student_name). This demonstrates FULL OUTER JOIN behavior.
+
 ### Example: All Lecturers and All Contracts
 ```sql
 SELECT 
@@ -515,6 +535,8 @@ SELECT
 FROM lecturers l
 RIGHT JOIN lecturer_contracts lc ON l.id = lc.lecturer_id;
 ```
+
+**Result:** Returns all lecturers (including Sarah Williams with NULL contract info) AND all contracts. This demonstrates FULL OUTER JOIN behavior, showing both lecturers without contracts and contracts (though in this 1:1 relationship, all contracts have lecturers).
 
 ---
 
@@ -538,7 +560,7 @@ FROM students s
 CROSS JOIN classes c;
 ```
 
-**Result:** If you have 10 students and 4 classes, you get 40 rows.
+**Result:** If you have 13 students and 5 classes, you get 65 rows (13 × 5 = 65).
 
 ### Example 2: All Possible Lecturer-Course Combinations
 ```sql
